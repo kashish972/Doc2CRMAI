@@ -1,9 +1,15 @@
-import { connectToDatabase } from "./db";
+import mongoose from "mongoose";
+import { getBaseMongoUri } from "./db";
 import { DocumentModel, LeadModel, CompanyModel, ContactModel, ActivityModel } from "./models";
+import { setCurrentTenantConnection } from "./models/tenant-runtime";
 
 async function seed() {
   console.log("Connecting to database...");
-  await connectToDatabase();
+  const connection = await mongoose.createConnection(getBaseMongoUri(), {
+    bufferCommands: false,
+    family: 4,
+  }).asPromise();
+  setCurrentTenantConnection(connection);
 
   console.log("Clearing existing data...");
   await Promise.all([

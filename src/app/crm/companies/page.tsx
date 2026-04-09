@@ -1,11 +1,18 @@
+import { redirect } from "next/navigation";
+import { getSession } from "@/server/auth/session";
 import { MainNav } from "@/components/navigation";
 import { CompaniesContent } from "./companies-content";
 
-export default function CompaniesPage() {
+export default async function CompaniesPage() {
+  const session = await getSession();
+
+  if (!session) {
+    redirect("/login");
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-secondary/30">
       <MainNav />
-      <p>Companies</p>
       <CompaniesContent />
     </div>
   );

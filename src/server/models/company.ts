@@ -1,4 +1,5 @@
-import mongoose, { Schema, Document } from "mongoose";
+import { Schema, Document } from "mongoose";
+import { createTenantModelProxy } from "./tenant-runtime";
 
 export interface ICompany extends Document {
   name: string;
@@ -21,5 +22,4 @@ const CompanySchema = new Schema<ICompany>(
   }
 );
 
-export const CompanyModel =
-  mongoose.models.Company || mongoose.model<ICompany>("Company", CompanySchema);
+export const CompanyModel = createTenantModelProxy<ICompany>("Company", CompanySchema);

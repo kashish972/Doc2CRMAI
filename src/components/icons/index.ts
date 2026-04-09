@@ -35,6 +35,7 @@ export {
   Sparkles,
   Activity,
   ExternalLink,
+  UserPlus,
 } from "lucide-react";
 
 export { cn } from "@/lib/utils";

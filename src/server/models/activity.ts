@@ -1,4 +1,5 @@
-import mongoose, { Schema, Document, Types } from "mongoose";
+import { Schema, Document, Types } from "mongoose";
+import { createTenantModelProxy } from "./tenant-runtime";
 
 export interface IActivity extends Document {
   entityType: "lead" | "company" | "contact" | "document";
@@ -24,5 +25,4 @@ const ActivitySchema = new Schema<IActivity>(
   }
 );
 
-export const ActivityModel =
-  mongoose.models.Activity || mongoose.model<IActivity>("Activity", ActivitySchema);
+export const ActivityModel = createTenantModelProxy<IActivity>("Activity", ActivitySchema);

@@ -1,4 +1,5 @@
-import mongoose, { Schema, Document, Types } from "mongoose";
+import { Schema, Document, Types } from "mongoose";
+import { createTenantModelProxy } from "./tenant-runtime";
 
 export interface IContact extends Document {
   fullName: string;
@@ -23,5 +24,4 @@ const ContactSchema = new Schema<IContact>(
   }
 );
 
-export const ContactModel =
-  mongoose.models.Contact || mongoose.model<IContact>("Contact", ContactSchema);
+export const ContactModel = createTenantModelProxy<IContact>("Contact", ContactSchema);

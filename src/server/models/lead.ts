@@ -1,4 +1,5 @@
-import mongoose, { Schema, Document, Types } from "mongoose";
+import { Schema, Document, Types } from "mongoose";
+import { createTenantModelProxy } from "./tenant-runtime";
 
 export interface ILead extends Document {
   fullName: string;
@@ -35,4 +36,4 @@ const LeadSchema = new Schema<ILead>(
   }
 );
 
-export const LeadModel = mongoose.models.Lead || mongoose.model<ILead>("Lead", LeadSchema);
+export const LeadModel = createTenantModelProxy<ILead>("Lead", LeadSchema);
