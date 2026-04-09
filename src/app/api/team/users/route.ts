@@ -29,23 +29,18 @@ export async function GET() {
 
     await connectToPlatformDatabase();
 
-    const tenant = await PlatformTenantModel.findById(session.tenantId).lean();
+    const tenantExists = await PlatformTenantModel.exists({ _id: session.tenantId });
 
-    if (!tenant) {
+    if (!tenantExists) {
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
 
-    const users = await PlatformUserModel.find({ tenantId: tenant._id })
+    const users = await PlatformUserModel.find({ tenantId: session.tenantId })
       .select("name email role createdAt updatedAt")
       .sort({ createdAt: -1 })
       .lean();
 
     return NextResponse.json({
-      tenant: {
-        id: String(tenant._id),
-        name: tenant.name,
-        slug: tenant.slug,
-      },
       users: users.map((user) => ({
         id: String(user._id),
         name: user.name,
@@ -77,9 +72,9 @@ export async function POST(request: NextRequest) {
 
     await connectToPlatformDatabase();
 
-    const tenant = await PlatformTenantModel.findById(session.tenantId);
+    const tenantExists = await PlatformTenantModel.exists({ _id: session.tenantId });
 
-    if (!tenant) {
+    if (!tenantExists) {
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     }
 
@@ -111,7 +106,7 @@ export async function POST(request: NextRequest) {
     const passwordHash = hashPassword(password);
 
     const user = await PlatformUserModel.create({
-      tenantId: tenant._id,
+      tenantId: session.tenantId,
       name,
       email,
       passwordHash,

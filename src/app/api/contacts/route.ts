@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/server/db";
 import { ContactModel } from "@/server/models";
 
+function getPopulatedStringField(value: unknown, field: string): string | null {
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+
+  const record = value as Record<string, unknown>;
+  return typeof record[field] === "string" ? record[field] : null;
+}
+
 export async function GET(request: NextRequest) {
   try {
     await connectToDatabase();
@@ -30,9 +39,9 @@ export async function GET(request: NextRequest) {
         email: contact.email,
         phone: contact.phone,
         companyId: contact.companyId,
-        companyName: (contact.companyId as { name: string })?.name || null,
+        companyName: getPopulatedStringField(contact.companyId, "name"),
         leadId: contact.leadId,
-        leadName: (contact.leadId as { fullName: string })?.fullName || null,
+        leadName: getPopulatedStringField(contact.leadId, "fullName"),
         createdAt: contact.createdAt,
         updatedAt: contact.updatedAt,
       })),

@@ -17,7 +17,7 @@ export default async function TeamPage() {
   }
 
   await connectToPlatformDatabase();
-  const tenant = await PlatformTenantModel.findById(session.tenantId).lean();
+  const tenant = await PlatformTenantModel.findById(session.tenantId).exec();
 
   if (!tenant) {
     redirect("/login");

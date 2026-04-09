@@ -1,5 +1,5 @@
-import type { Connection, Model, Schema } from "mongoose";
-import mongoose, { Types } from "mongoose";
+import type { Connection, Model } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 
 export interface TenantDocument {
   originalName: string;
