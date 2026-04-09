@@ -1,5 +1,5 @@
 import { AsyncLocalStorage } from "node:async_hooks";
-import type { Connection, Schema } from "mongoose";
+import type { Connection, Document, Model, Schema } from "mongoose";
 
 interface TenantStore {
   connection: Connection;
@@ -40,13 +40,18 @@ export function getCurrentTenantConnection(): Connection {
   throw new Error("Tenant database connection is not initialized");
 }
 
-export function createTenantModelProxy<T>(modelName: string, schema: Schema) {
+export function createTenantModelProxy<TDocument extends Document>(
+  modelName: string,
+  schema: Schema<TDocument>
+) {
   return new Proxy({} as object, {
     get(_target, property) {
       const connection = getCurrentTenantConnection();
-      const model = connection.models[modelName] || connection.model(modelName, schema);
+      const model =
+        (connection.models[modelName] as Model<TDocument> | undefined) ||
+        connection.model<TDocument>(modelName, schema);
       const value = (model as unknown as Record<string | symbol, unknown>)[property];
       return typeof value === "function" ? value.bind(model) : value;
     },
-  }) as T;
+  }) as Model<TDocument>;
 }
